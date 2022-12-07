@@ -34,7 +34,8 @@ app.controller('myCtrl', function ($scope) {
             } else {
                 let reqstBody = {
                     "shareBoxId": $("#shareBoxId").val(),
-                    "imgUrlData": $scope.imgUrlData
+                    "imgUrlData": $scope.imgUrlData,
+                    "userName": $scope.userData.userName
                 };
                 $.ajax({
                     type: 'post',
@@ -94,6 +95,7 @@ app.controller('myCtrl', function ($scope) {
             success: function (response) {
                 alert(" Profile data has been updated!!!");
                 localStorage.setItem("userProfileData", JSON.stringify($scope.userData));
+                $scope.getThoughtUser();
 
             }, error: function (error) {
                 $scope.userData = Object.assign({}, $scope.tempUserData);
@@ -101,8 +103,48 @@ app.controller('myCtrl', function ($scope) {
             }
         });
     }
+    $scope.getThoughtUser = function () {
+        $scope.postIds = [];
+        $.ajax({
+            type: 'get',
+            contentType: "application/json",
+            dataType: 'json',
+            cache: false,
+            url: URL + "/socialMedia/" + userId + ".json",
+            success: function (lresponse) {
+                for (let i in lresponse) {
+                    let data = lresponse[i];
+                    data["userId"] = i;
+                    $scope.postIds.push(i);
+                }
+                updateThoughts();
+                $scope.$apply();
+            }, error: function (error) {
+                alert("Something went wrong");
+            }
+        });
+    }
+    function updateThoughts() {
+        let reqstBody = {
+            "userName": $scope.userData.userName
+        };
+        $scope.postIds.forEach(function (obj) {
+            $.ajax({
+                type: 'patch',
+                contentType: "application/json",
+                dataType: 'json',
+                cache: false,
+                url: URL + "/socialMedia/" + userId + "/" + obj + ".json",
+                data: JSON.stringify(reqstBody),
+                success: function (response) {
+                    $scope.getThoughts();
+                }, error: function (error) {
+                    alert("Something went wrong");
+                }
+            });
+        })
 
-
+    }
     $scope.logout = function () {
         localStorage.removeItem("userId");
         localStorage.removeItem("userData");
@@ -116,6 +158,7 @@ app.controller('myCtrl', function ($scope) {
         if (type == "HOMEFEED") {
             $scope.isProfileDisplay = false;
             $scope.isCommunitiesDisplay = false;
+            $scope.getThoughts();
         } else if (type == "COMMUNITIES") {
             $scope.isProfileDisplay = false;
             $scope.isCommunitiesDisplay = true;

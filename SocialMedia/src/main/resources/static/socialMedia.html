@@ -91,7 +91,10 @@
             </div>
             <div class="col-md-12 shadow-cls mt-2" ng-repeat="data in viewThoughtData"
                 ng-show="!isProfileDisplay && !isCommunitiesDisplay">
-                <div>{{data.shareBoxId}}</div>
+                <div>
+                    <strong class="text-success">{{data.userName}}</strong><br>
+                    <span>{{data.shareBoxId}}</span>
+                </div>
                 <img ng-if="data.imgUrlData != undefined" src="{{data.imgUrlData}}" alt="">
             </div>
             <div class="col-md-12" id="profileDivId" ng-show="isProfileDisplay && !isCommunitiesDisplay">
