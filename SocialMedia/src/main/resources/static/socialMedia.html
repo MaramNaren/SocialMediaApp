@@ -1,0 +1,150 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/commonStyle.css">
+    <script src="js/socialMediaSystem.js"></script>
+</head>
+<style>
+    .shadow-cls {
+        box-shadow: 1px 1px 14px 4px rgb(0 0 0 / 10%);
+        background-color: #fafafa;
+        border-radius: 10px;
+    }
+
+    .profile-img {
+        height: 51px;
+        width: 63px;
+        border-radius: 52%;
+    }
+
+    #shareBoxId {
+        border: 0px;
+        min-height: 59px;
+        max-height: 118px
+    }
+
+    .card {
+        box-shadow: 1px 1px 14px 4px rgb(0 0 0 / 10%);
+        margin: 10px;
+    }
+
+</style>
+
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="onload();"
+    style="font-family: fangsong;background-color: aliceblue;">
+    <div class="row m-0 p-0">
+        <div class="col-md-12 p-0">
+            <div class="navbar-dark text-white h-100" style="background-color: #573185a8;">
+                <img src="logo.webp" style="height: 52px;width: 84px;">
+                <i class="fa fa-sign-out m-3 float-right" style="font-size: 20px;cursor: pointer;"
+                    ng-click="logout()">Logout</i>
+                <img src="{{userData.profilePic}}" class="float-right profile-img" style="height: 44px;width: 43px;"
+                    ng-click="switchMenu('PROFILE','');isProfileDisplay = true;isCommunitiesDisplay = false">
+            </div>
+
+        </div>
+        <div class="col-md-3 p-0 mt-2" style="height: 87vh;">
+            <div class="navbar-dark text-white h-100 align-self-start shadow-cls">
+                <a data-toggle="collapse" class="px-1 d-inline d-md-none text-white" style="border-radius: 124px;"
+                    href="#" data-target=".collapse"><i class="fa fa-bars"></i></a>
+                <ul class="nav flex-column flex-nowrap text-truncate">
+                    <li class="nav-item " menuType="HOMEFEED">
+                        <a class="nav-link active menuCls" id="menuTabId" href="#"
+                            ng-click="switchMenu('HOMEFEED','menuTabId')" style="border-radius: 124px;"><i
+                                class='fa fa-sticky-note'></i> Home Feed</a>
+                    </li>
+                    <li class="nav-item " menuType="COMMUNITIES">
+                        <a class="nav-link menuCls" href="#" id="communitiesTabId"
+                            ng-click="switchMenu('COMMUNITIES','communitiesTabId')" style="border-radius: 124px;"><i
+                                class="fa fa-users"></i> Communities</a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-md-9 mt-2">
+            <div class="col-md-12 shadow-cls">
+                <form>
+                    <div class="form-group d-flex">
+                        <textarea class="form-control" id="shareBoxId" placeholder="Share your thoughts"></textarea>
+                        <i class="fa fa-plus" ng-click="addThoughts()"
+                            style="margin: 19px 0px 0px 7px; font-size: 23px;color: #573185a8;"></i>
+                    </div>
+                    <div class="custom-file mb-3" id="customFile" lang="es">
+                        <input type="file" class="custom-file-input" id="inputFileId" aria-describedby="fileHelp">
+                        <label class="custom-file-label" for="exampleInputFile">
+                            Add your memory
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-12 shadow-cls mt-2" ng-repeat="data in viewThoughtData"
+                ng-show="!isProfileDisplay && !isCommunitiesDisplay">
+                <div>{{data.shareBoxId}}</div>
+                <img ng-if="data.imgUrlData != undefined" src="{{data.imgUrlData}}" alt="">
+            </div>
+            <div class="col-md-12" id="profileDivId" ng-show="isProfileDisplay && !isCommunitiesDisplay">
+                <form>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="patientNameId">Name</label>
+                            <input type="text" ng-model="userData.userName" class="form-control" id="userNameId"
+                                placeholder="Enter Name" value="" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="emailId">Email</label>
+                            <input type="email" ng-model="userData.emailId" class="form-control" id="userEmailId"
+                                value="" placeholder="Enter Email" required>
+                        </div>
+                        <div class="custom-file col-md-6 mb-3" id="customFile" lang="es">
+                            <input type="file" class="custom-file-input" id="profilePic" aria-describedby="fileHelp">
+                            <label class="custom-file-label" for="profilePic">
+                                Upload your profile photo
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" class="border btn btn-light" data-dismiss="modal"
+                                ng-click="switchMenu('HOMEFEED','menuTabId')">Close</button>
+                            <button type="button" class="border btn btn-info"
+                                style="background-color: #573185a8!important;"
+                                ng-click="updateProfileData()">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row col-md-12 shadow-cls mt-1" id="communitiesId"
+                ng-show="isCommunitiesDisplay && !isProfileDisplay">
+                <div class="col-sm-4 mb-3" ng-repeat="data in friendList" ng-if="data.userId !=loginUserId">
+                    <div class="card">
+                        <img class="card-img-top" src="{{data.profilePic}}" alt="Card image cap">
+                        <div class="card-body">
+                            <p><strong>{{data.userName}}</strong></p>
+                            <p><strong>{{data.emailId}}</strong></p>
+                            <button ng-if="data.status != 'Friend'" ng-click="addFriend(data)" class="btn btn-info"
+                                data-toggle="modal" data-target="#placeOrderModalId"
+                                style="background-color: #573185a8!important">Add
+                                Friend</button>
+                            <button ng-if="data.status == 'Friend'" ng-click="getAddedFriendList(data)"
+                                class="btn btn-info" data-toggle="modal" data-target="#placeOrderModalId"
+                                style="background-color: #573185a8!important">Remove
+                                Friend</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
